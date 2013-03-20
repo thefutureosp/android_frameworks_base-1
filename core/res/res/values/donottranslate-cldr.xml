@@ -6,4 +6,6 @@
     <string name="time_of_day">%-l:%M:%S %p</string>
     <string name="date_and_time">%b %-e, %Y, %-l:%M:%S %p</string>
     <string name="date_time">%1$s, %2$s</string>
+    <string name="twelve_hour_time_format">h:mm a</string>
+    <string name="twenty_four_hour_time_format">HH:mm</string>
 </resources>

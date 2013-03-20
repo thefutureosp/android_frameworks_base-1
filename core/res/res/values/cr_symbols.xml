@@ -27,4 +27,8 @@
   <java-symbol type="anim" name="recent_screen_enter_left" />
   <java-symbol type="anim" name="recent_screen_fade_out" />
 
+  <!-- Pie controls -->
+  <java-symbol type="string" name="twelve_hour_time_format" />
+  <java-symbol type="string" name="twenty_four_hour_time_format" />
+
 </resources>
