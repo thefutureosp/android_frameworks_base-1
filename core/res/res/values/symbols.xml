@@ -2122,6 +2122,9 @@
   <!-- LED flashlight -->
   <java-symbol type="bool" name="config_enableTorch" /> 
 
+  <!-- SMS RIL_REQUEST_SEND_SMS_EXPECT_MORE -->
+  <java-symbol type="bool" name="config_smsUseExpectMore" />
+
   <!--  Animations -->
   <java-symbol type="string" name="animation_fade"/>
   <java-symbol type="string" name="animation_slide_left"/>
@@ -2177,5 +2180,4 @@
   <java-symbol type="id" name="key7" />
   <java-symbol type="id" name="key8" />
   <java-symbol type="id" name="key9" /> 
-
 </resources>
