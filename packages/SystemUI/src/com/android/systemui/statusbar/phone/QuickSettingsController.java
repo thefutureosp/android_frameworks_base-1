@@ -45,7 +45,6 @@ import static com.android.internal.util.cm.QSConstants.TILE_VOLUME;
 import static com.android.internal.util.cm.QSConstants.TILE_WIFI;
 import static com.android.internal.util.cm.QSConstants.TILE_WIFIAP;
 import static com.android.internal.util.cm.QSConstants.TILE_WIMAX;
-import static com.android.internal.util.cm.QSConstants.TILE_REBOOT;
 import static com.android.internal.util.cm.QSConstants.TILE_FCHARGE; 
 
 import android.content.BroadcastReceiver;
@@ -97,7 +96,6 @@ import com.android.systemui.quicksettings.VolumeTile;
 import com.android.systemui.quicksettings.WiFiDisplayTile;
 import com.android.systemui.quicksettings.WiFiTile;
 import com.android.systemui.quicksettings.WifiAPTile;
-import com.android.systemui.quicksettings.RebootTile;
 import com.android.systemui.quicksettings.FChargeTile;
 
 import java.util.ArrayList;
@@ -252,8 +250,6 @@ public class QuickSettingsController {
                 qs = new NfcTile(mContext, this);
             } else if (tile.equals(TILE_WIMAX)) {
                 // Not available yet
-	    } else if (tile.equals(TILE_REBOOT)) {
-                qs = new RebootTile(mContext, this);
 	    } else if (tile.equals(TILE_FCHARGE)) {
                 qs = new FChargeTile(mContext, this);    
             } else if (tile.equals(TILE_LTE)) {
