@@ -314,5 +314,5 @@
     <dimen name="notification_shortcuts_drawer_margin">56dp</dimen> 
  
     <!-- Network stats text size -->
-    <dimen name="network_stats_text_size">10dp</dimen>   
+    <dimen name="network_stats_text_size">9dp</dimen>   
 </resources>
