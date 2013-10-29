@@ -3516,30 +3516,6 @@ public final class Settings {
         public static final String NOTIF_ALPHA = "notif_alpha";  
 
 	/**
-         * Hide network speed indicator when there is no traffic
-         * @hide
-         */
-        public static final String STATUS_BAR_TRAFFIC_HIDE = "status_bar_traffic_hide"; 
-
-	/**
-         * Network speed indicator
-         * @hide
-         */
-        public static final String STATUS_BAR_TRAFFIC_ENABLE = "status_bar_traffic_enable"; 
-
-	/**
-         * Sets color of statusbar traffic indicator
-         * @hide
-         */
-        public static final String STATUS_BAR_TRAFFIC_COLOR = "status_bar_traffic_color"; 
-
-	/**
-         * Show summary of traffic.
-         * @hide
-         */
-        public static final String STATUS_BAR_TRAFFIC_SUMMARY = "status_bar_traffic_summary";
-
-	/**
          * whether which Ram Usage Bar mode is used on recent switcher
          * 0 = none, 1 = only app use, 2 = app and cache use, 3 = app, cache and system use
          * @hide
