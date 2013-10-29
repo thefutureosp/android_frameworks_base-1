@@ -3527,6 +3527,12 @@ public final class Settings {
          */
         public static final String STATUS_BAR_NETWORK_STATS_UPDATE_INTERVAL = "status_bar_network_stats_update_frequency";
 
+        /**
+         * Network stats Color style
+         * @hide
+         */
+        public static final String STATUS_BAR_NETWORK_COLOR = "status_bar_network_usage_color";
+
 	/**
          * whether which Ram Usage Bar mode is used on recent switcher
          * 0 = none, 1 = only app use, 2 = app and cache use, 3 = app, cache and system use
