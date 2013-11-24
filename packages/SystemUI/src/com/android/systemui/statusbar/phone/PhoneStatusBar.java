@@ -92,6 +92,8 @@ import android.widget.ImageView;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TabHost;
+import android.widget.TabHost.TabSpec;
 import android.widget.TextView;
 
 import com.android.internal.statusbar.StatusBarIcon;
@@ -311,8 +313,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     // last theme that was applied in order to detect theme change (as opposed
     // to some other configuration change).
     CustomTheme mCurrentTheme;
-    private boolean mRecreating = false;
 
+    // status bar brightness control
     private boolean mBrightnessControl;
     private float mScreenWidth;
     private int mMinBrightness;
@@ -321,6 +323,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     int mLinger;
     int mInitialTouchX;
     int mInitialTouchY;
+
+    private boolean mRecreating = false;
 
     // for disabling the status bar
     int mDisabled = 0;
@@ -737,6 +741,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             }
         } catch (RemoteException ex) {
             // no window manager? good luck with that
+        }
+
+        if (mRecreating) {
+        } else {
+            addActiveDisplayView();
         }
 
         // figure out which pixel-format to use for the status bar.
@@ -2790,7 +2799,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         mHandler.postDelayed(mUserAutohide, 350); // longer than app gesture -> flag clear
     }
 
-    private boolean areLightsOn() {
+    public boolean areLightsOn() {
         return 0 == (mSystemUiVisibility & View.SYSTEM_UI_FLAG_LOW_PROFILE);
     }
 
@@ -2810,6 +2819,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         }
     }
 
+    @Override
     public void topAppWindowChanged(boolean showMenu) {
         if (DEBUG) {
             Log.d(TAG, (showMenu?"showing":"hiding") + " the MENU button");
