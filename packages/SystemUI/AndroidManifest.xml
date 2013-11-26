@@ -71,6 +71,9 @@
 
     <!-- Keyguard -->
     <uses-permission android:name="android.permission.CONTROL_KEYGUARD" />
+ 
+    <!--Halo-->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <!-- Kill app permission -->
     <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" />
@@ -268,6 +271,9 @@
                   android:exported="true"
                   android:theme="@style/Theme.DummyActivity">
         </activity>
+
+        <activity android:name="com.android.systemui.Transparent"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
     </application>
 </manifest>
