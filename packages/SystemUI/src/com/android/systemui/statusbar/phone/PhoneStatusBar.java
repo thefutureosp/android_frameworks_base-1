@@ -191,8 +191,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     private float mFlingGestureMaxOutputVelocityPx; // how fast can it really go? (should be a little
                                                     // faster than mSelfCollapseVelocityPx)
 
-    private final String NOTIF_WALLPAPER_IMAGE_PATH = "/data/data/com.android.settings/files/notification_wallpaper.jpg";
-
     PhoneStatusBarPolicy mIconPolicy;
 
     // These are no longer handled by the policy, because we need custom strategies for them
@@ -955,10 +953,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             });
         }
 
-	// Set notification background
-        setNotificationWallpaperHelper();
-
-        // Notification Shortcuts
+	// Notification Shortcuts
         mNotificationShortcutsLayout = (ShortcutsWidget)
             mStatusBarWindow.findViewById(R.id.custom_notificiation_shortcuts);
         mNotificationShortcutsLayout.setGlobalButtonOnClickListener(new View.OnClickListener() {
@@ -1547,10 +1542,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             mPile.removeView(remove);
         }
 
-	//set alpha for notification pile before it is added
-        setNotificationAlphaHelper(); 
-
-        for (int i=0; i<toShow.size(); i++) {
+	for (int i=0; i<toShow.size(); i++) {
             View v = toShow.get(i);
             if (v.getParent() == null) {
                 mPile.addView(v, i);
@@ -3675,36 +3667,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         }
     }
 
-    private void setNotificationWallpaperHelper() {
-        float wallpaperAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIF_WALLPAPER_ALPHA, 0.1f);
-        String notifiBack = Settings.System.getString(mContext.getContentResolver(), Settings.System.NOTIFICATION_BACKGROUND);
-        File file = new File(NOTIF_WALLPAPER_IMAGE_PATH);
-        mNotificationPanel.setBackgroundResource(0);
-        mNotificationPanel.setBackgroundResource(R.drawable.notification_panel_bg);
-        Drawable background = mNotificationPanel.getBackground();
-        background.setAlpha(0);
-        if (!file.exists()) {
-            if (notifiBack != null && !notifiBack.isEmpty()) {
-                background.setColorFilter(Integer.parseInt(notifiBack), Mode.SRC_ATOP);
-            }
-            background.setAlpha((int) ((1-wallpaperAlpha) * 255)); 
-        }
-    }
-
-    private void setNotificationAlphaHelper() { 
-        float notifAlpha = Settings.System.getFloat(mContext.getContentResolver(), Settings.System.NOTIF_ALPHA, 0.0f);
-        if (mPile != null) {
-            int N = mNotificationData.size();
-            for (int i=0; i<N; i++) {
-              Entry ent = mNotificationData.get(N-i-1);
-              View expanded = ent.expanded;
-              if (expanded !=null && expanded.getBackground()!=null) expanded.getBackground().setAlpha((int) ((1-notifAlpha) * 255));
-              View large = ent.getBigContentView();
-              if (large != null && large.getBackground()!=null) large.getBackground().setAlpha((int) ((1-notifAlpha) * 255));
-            }
-        } 
-    }   
-
     @Override
     public void destroy() {
         super.destroy();
@@ -3792,11 +3754,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         @Override
         public void onChange(boolean selfChange) {
             onChange(selfChange, null);
-
-	    // Notification drawer backgroud
-	    setNotificationWallpaperHelper();
-            setNotificationAlphaHelper();
-        }
+	}
 
         @Override
         public void onChange(boolean selfChange, Uri uri) {
@@ -3834,11 +3792,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                     mRibbonQS.setupQuickSettings();
                 }
             }
-
-	    // Notification drawer backgroud
-	    setNotificationWallpaperHelper();
-            setNotificationAlphaHelper();
-        }
+	}
 
         public void startObserving() {
             final ContentResolver cr = mContext.getContentResolver();
@@ -3880,16 +3834,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
 
             cr.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.QUICK_SETTINGS_RIBBON_TILES),
-                    false, this, UserHandle.USER_ALL);
-
-	    // Notification drawer backround
-            cr.registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.NOTIF_WALLPAPER_ALPHA),
-                    false, this, UserHandle.USER_ALL);
-                    setNotificationWallpaperHelper();
-
-            cr.registerContentObserver(
-                    Settings.System.getUriFor(Settings.System.NOTIF_ALPHA),
                     false, this, UserHandle.USER_ALL);
         }
     }
