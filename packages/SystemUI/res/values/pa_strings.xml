@@ -29,6 +29,9 @@
     <!-- QuickSettings: Immersive mode (Off) [CHAR LIMIT=NONE] -->
     <string name="quick_settings_immersive_mode_off_label">Immersive Off</string>
 
+    <!-- QuickSettings: Sleep Tile  -->
+    <string name="quick_settings_sleep_label">Sleep</string>
+
     <!-- Content description of the halo button in the notification panel for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_halo">Create notification halo.</string>
 
@@ -52,4 +55,5 @@
     <string name="halo_signal_bars_2">TWO BARS</string>
     <string name="halo_signal_bars_1">ONE BAR</string>
     <string name="halo_signal_bars_none">NO BARS</string>
+
 </resources>
