@@ -32,6 +32,9 @@
     <!-- QuickSettings: Sleep Tile  -->
     <string name="quick_settings_sleep_label">Sleep</string>
 
+    <!-- QuickSettings: Power Menu Tile  -->
+    <string name="quick_settings_powermenu_label">Power menu</string>
+
     <!-- Content description of the halo button in the notification panel for accessibility (not shown on the screen). [CHAR LIMIT=NONE] -->
     <string name="accessibility_halo">Create notification halo.</string>
 
