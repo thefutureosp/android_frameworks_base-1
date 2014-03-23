@@ -12,5 +12,8 @@
 
   <!-- label for screen record item in phone options dialog -->
   <string name="global_action_screen_record">Gravador de tela</string>
+
+  <!-- label for item that takes On-The-Go in the phone options dialog -->
+  <string name="global_action_onthego">Modo em movimento</string>
   
 </resources>
