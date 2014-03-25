@@ -16,26 +16,22 @@
 
 package com.android.keyguard;
 
-import android.app.PendingIntent;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.graphics.drawable.TransitionDrawable;
-import com.android.internal.policy.IKeyguardShowCallback;
-import com.android.internal.widget.LockPatternUtils;
-
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.drawable.Drawable;
+import android.graphics.Bitmap;
+import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.ColorFilter;
@@ -43,6 +39,9 @@ import android.graphics.Matrix;
 import android.graphics.PixelFormat;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.TransitionDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.os.Bundle;
@@ -72,7 +71,12 @@ import android.view.ViewManager;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
 
+import com.android.internal.policy.IKeyguardShowCallback;
+import com.android.internal.widget.LockPatternUtils;
+
 import com.android.internal.util.cm.TorchConstants;
+
+import java.io.File;
 
 /**
  * Manages creating, showing, hiding and resetting the keyguard.  Calls back
@@ -84,6 +88,10 @@ public class KeyguardViewManager {
     private final static boolean DEBUG = KeyguardViewMediator.DEBUG;
     private static String TAG = "KeyguardViewManager";
     public final static String IS_SWITCHING_USER = "is_switching_user";
+
+    // Lockscreen Wallpaper
+    private static final String INTENT_LOCKSCREEN_WALLPAPER_CHANGED = "lockscreen_changed";
+    private static final String LOCKSCREEN_IMAGE_FILE = "/lockwallpaper.sav";
 
     // Delay dismissing keyguard to allow animations to complete.
     private static final int HIDE_KEYGUARD_DELAY = 500;
@@ -100,14 +108,17 @@ public class KeyguardViewManager {
 
     private ViewManagerHost mKeyguardHost;
     private KeyguardHostView mKeyguardView;
+    private WallpaperObserver mReceiver;
 
     private boolean mScreenOn = false;
     private LockPatternUtils mLockPatternUtils;
 
     private Bitmap mCustomImage = null;
+    private Bitmap mLockscreenBackground;
     private int mBlurRadius = 12;
     private boolean mSeeThrough = false;
     private boolean mIsCoverflow = true;
+    private boolean mBackgroundInitialized;
 
     private boolean mUnlockKeyDown = false;
 
@@ -115,9 +126,37 @@ public class KeyguardViewManager {
     private NotificationViewManager mNotificationViewManager;
     private boolean mLockscreenNotifications = true;
 
+    class WallpaperObserver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (action.equals(INTENT_LOCKSCREEN_WALLPAPER_CHANGED)) {
+                customLockscreen();
+            }
+        }
+    }
+
+    private void customLockscreen() {
+        mLockscreenBackground = null;
+        String path = mContext.getExternalCacheDir().getAbsolutePath();
+        path = path.replace("com.android.keyguard", "com.android.wallpapercropper");
+        File file = new File(path + LOCKSCREEN_IMAGE_FILE);
+        if (file.exists()) {
+            mLockscreenBackground = BitmapFactory.decodeFile(file.getAbsolutePath());
+        }
+    }
+
+    private void registerWallpaperReceiver() {
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(INTENT_LOCKSCREEN_WALLPAPER_CHANGED);
+        mReceiver = new WallpaperObserver();
+        mContext.registerReceiver(mReceiver, filter);
+    }
+
     private KeyguardUpdateMonitorCallback mBackgroundChanger = new KeyguardUpdateMonitorCallback() {
         @Override
         public void onSetBackground(Bitmap bmp) {
+            if (bmp != null) mCustomImage = null;
             mIsCoverflow = true;
             setCustomBackground (bmp);
         }
@@ -312,8 +351,23 @@ public class KeyguardViewManager {
 
         public ViewManagerHost(Context context) {
             super(context);
-            setBackground(mBackgroundDrawable);
+            registerWallpaperReceiver();
+            customLockscreen();
             mLastConfiguration = new Configuration(context.getResources().getConfiguration());
+
+            if (mLockscreenBackground == null) {
+                initBackground();
+            } else {
+                Drawable customLockscreen = new BitmapDrawable(mContext.getResources(),
+                mLockscreenBackground);
+                setBackground(customLockscreen);
+                mBackgroundInitialized = false;
+            }
+        }
+
+        public void initBackground() {
+            mBackgroundInitialized = true;
+            setBackground(mBackgroundDrawable);
         }
 
         public void drawToCanvas(Canvas canvas, Drawable drawable) {
@@ -341,6 +395,9 @@ public class KeyguardViewManager {
                 computeCustomBackgroundBounds(mCustomBackground);
                 invalidate();
             } else {
+                if (getWidth() == 0 || getHeight() == 0) {
+                    d = null;
+                }
                 if (d == null) {
                     mCustomBackground = null;
                     setBackground(mBackgroundDrawable);
@@ -638,20 +695,25 @@ public class KeyguardViewManager {
             inflateKeyguardView(options);
             mKeyguardView.requestFocus();
         }
-        updateUserActivityTimeoutInWindowLayoutParams();
-        mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
-
-        mKeyguardHost.restoreHierarchyState(mStateContainer);
-        if (mCustomImage != null) {
-            int currentRotation = mKeyguardView.getDisplay().getRotation() * 90;
-            mCustomImage = rotateBmp(mCustomImage, mLastRotation - currentRotation);
-            mLastRotation = currentRotation;
+        if(mCustomImage != null || mLockscreenBackground != null) {
+            if (mCustomImage != null) {
+                int currentRotation = mKeyguardView.getDisplay().getRotation() * 90;
+                mCustomImage = rotateBmp(mCustomImage, mLastRotation - currentRotation);
+                mLastRotation = currentRotation;
+            }
+            updateShowWallpaper(false);
+ 
             mIsCoverflow = false;
-            setCustomBackground(mCustomImage);
+            setCustomBackground(mCustomImage == null ? mLockscreenBackground : mCustomImage);
         } else {
             updateShowWallpaper(true);
             mIsCoverflow = true;
         }
+
+        updateUserActivityTimeoutInWindowLayoutParams();
+        mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
+
+        mKeyguardHost.restoreHierarchyState(mStateContainer);
     }
 
     private Bitmap rotateBmp(Bitmap bmp, int degrees) {
@@ -855,6 +917,7 @@ public class KeyguardViewManager {
         }
 
         if (mKeyguardHost != null) {
+            if (!mBackgroundInitialized) mKeyguardHost.initBackground();
             mKeyguardHost.setVisibility(View.GONE);
 
             // We really only want to preserve keyguard state for configuration changes. Hence

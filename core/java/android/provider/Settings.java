@@ -3387,6 +3387,12 @@ public final class Settings {
         public static final String LOCKSCREEN_BLUR_RADIUS = "lockscreen_blur_radius";
 
         /**
+         * String for backing up see through status
+         * @hide
+         */
+        public static final String LOCKSCREEN_SEE_THROUGH_BACKUP = "lockscreen_see_through_backup";
+
+        /**
          * Whether to wake the screen with the volume keys, the value is boolean.
          * @hide
          */
