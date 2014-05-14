@@ -67,6 +67,7 @@
     </permission>
 
     <permission name="android.permission.WRITE_EXTERNAL_STORAGE" >
+        <group gid="media_rw" />
         <group gid="sdcard_r" />
         <group gid="sdcard_rw" />
     </permission>
