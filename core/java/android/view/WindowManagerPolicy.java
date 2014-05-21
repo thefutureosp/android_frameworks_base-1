@@ -1221,4 +1221,10 @@ public interface WindowManagerPolicy {
      * @return True if navbar can be hidden by immersive mode
      */
     public boolean isImmersiveMode(int vis);
+
+    /**
+     * Ask keyguard to invoke the assist intent after dismissing keyguard
+     * {@link android.content.Intent#ACTION_ASSIST}
+     */
+    public void showAssistant();
 }

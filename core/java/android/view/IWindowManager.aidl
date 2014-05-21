@@ -294,4 +294,10 @@ interface IWindowManager
      * @hide
      */
     int getSystemUIVisibility();
+
+    /**
+     * Tell keyguard to show the assistant (Intent.ACTION_ASSIST) after asking for the user's
+     * credentials.
+     */
+    void showAssistant();
 }
