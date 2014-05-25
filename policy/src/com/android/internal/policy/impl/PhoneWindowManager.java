@@ -609,14 +609,10 @@ public class PhoneWindowManager implements WindowManagerPolicy {
         }
         @Override
         public void onReceive(Context context, Intent intent) {
-           final String action = intent.getAction();
-            if (action.equals(Intent.ACTION_POWERMENU)) {
-                showGlobalActionsDialog();
-            }
+            final String action = intent.getAction();
             if (action.equals(Intent.ACTION_POWERMENU_REBOOT)) {
                 mWindowManagerFuncs.rebootTile(); 
             }
-
         }
 
         private void registerSelf() {
@@ -624,7 +620,6 @@ public class PhoneWindowManager implements WindowManagerPolicy {
                 mIsRegistered = true;
 
                 IntentFilter filter = new IntentFilter();
-                filter.addAction(Intent.ACTION_POWERMENU);
                 filter.addAction(Intent.ACTION_POWERMENU_REBOOT);
                 mContext.registerReceiver(mPowerMenuReceiver, filter);
             }
@@ -1417,7 +1412,7 @@ public class PhoneWindowManager implements WindowManagerPolicy {
             screenTurnedOff(WindowManagerPolicy.OFF_BECAUSE_OF_USER);
         }
 
-	mPowerMenuReceiver = new PowerMenuReceiver(context);
+        mPowerMenuReceiver = new PowerMenuReceiver(context);
         mPowerMenuReceiver.registerSelf();
 
         String deviceKeyHandlerLib = mContext.getResources().getString(
